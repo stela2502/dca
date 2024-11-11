@@ -56,7 +56,7 @@ def impute_expression_data( adata, output_dir ):
 adata = scanpy.read_10x_mtx('YourDataFolder/filtered_feature_bc_matrix/')
 
 impute_expression_data( data2, 'YourDataFolder_IMPUTED/filtered_feature_bc_matrix/')
-``
+```
 
 
 ## Deep count autoencoder for denoising scRNA-seq data
