@@ -1,6 +1,63 @@
 ## This fork tries to lift the code to support TensorFlow >2.5
 
-Not shure it will work.
+I fact it seams to be just outdated and abandoned.
+The new way to do this is possibly something like that:
+
+```
+import anndata
+import scanpy
+import scvi
+import scipy
+import os
+import gzip
+import subprocess
+
+def gzip_files_in_directory(path):
+    # Make sure the path exists
+    if os.path.exists(path):
+        # Run the gzip command on all files in the directory
+        subprocess.run(f"gzip {path}/*", shell=True, check=True)
+        print(f"All files in {path} have been gzipped.")
+    else:
+        print(f"The specified directory {path} does not exist.")
+
+# Usage example:
+
+def impute_expression_data( adata, output_dir ):
+    # Convert to CSR format
+    adata.X = scipy.sparse.csr_matrix(adata.X)
+    # Set up the model
+    scvi.model.SCVI.setup_anndata(adata)
+    # Train the model
+    model.train()
+    # Get the imputed expression values for cells
+    imputed_expression = scipy.sparse.csr_matrix(model.get_normalized_expression())
+    adata.X = imputed_expression  # Replace with imputed data
+    os.makedirs(output_dir, exist_ok=True)
+    # Write the sparse matrix to a compressed MTX file
+    scipy.io.mmwrite(os.path.join(output_dir, 'matrix.mtx'), imputed_expression)
+    # Extract barcodes (cell identifiers)
+    barcodes = adata.obs_names.values
+    # Write barcodes to a TSV file
+    with open(os.path.join(output_dir, 'barcodes.tsv'), 'w') as f:
+        for barcode in barcodes:
+            f.write(f"{barcode}\n")
+            
+    # Extract feature names (gene identifiers)
+    features = adata.var_names.values
+    # Write features to a TSV file
+    with open(os.path.join(output_dir, 'features.tsv'), 'w') as f:
+        for feature in features:
+            f.write(f"{feature}\n")
+    
+    gzip_files_in_directory( output_dir )
+
+
+adata = scanpy.read_10x_mtx('YourDataFolder/filtered_feature_bc_matrix/')
+
+impute_expression_data( data2, 'YourDataFolder_IMPUTED/filtered_feature_bc_matrix/')
+``
+
 
 ## Deep count autoencoder for denoising scRNA-seq data
 
