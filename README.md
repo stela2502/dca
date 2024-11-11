@@ -1,3 +1,7 @@
+## This fork tries to lift the code to support TensorFlow >2.5
+
+Not shure it will work.
+
 ## Deep count autoencoder for denoising scRNA-seq data
 
 A deep count autoencoder network to denoise scRNA-seq data and remove the dropout effect by taking the count structure, overdispersed nature and sparsity of the data into account using a deep autoencoder with zero-inflated negative binomial (ZINB) loss function.
