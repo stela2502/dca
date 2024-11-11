@@ -28,6 +28,7 @@ def impute_expression_data( adata, output_dir ):
     adata.X = scipy.sparse.csr_matrix(adata.X)
     # Set up the model
     scvi.model.SCVI.setup_anndata(adata)
+    model = scvi.model.SCVI(adata)
     # Train the model
     model.train()
     # Get the imputed expression values for cells
